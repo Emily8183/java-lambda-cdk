@@ -1,13 +1,35 @@
-.classpath.txt
-target
-.classpath
-.project
-.idea
-.settings
-.vscode
-*.iml
+# Maven target directory
+target/
 
-# CDK asset staging directory
-.cdk.staging
-cdk.out
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VSCode
+.vscode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build artifacts
+cdk.out/
+
+# AWS credentials/config (if accidentally copied)
+.aws/
+
+# Temporary files
+*.tmp
+
+.env
 
