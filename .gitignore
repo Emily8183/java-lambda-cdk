@@ -1,19 +1,20 @@
 # Maven target directory
 target/
+lambda-assets/*.jar
+dependency-reduced-pom.xml
+release.properties
 
 # IntelliJ IDEA
 .idea/
 *.iml
+Junit.xml
+.gradle
+
+# IntelliJ personal config
 *.iws
+
+# IntelliJ build output
 out/
-
-# Eclipse
-.project
-.classpath
-.settings/
-
-# VSCode
-.vscode/
 
 # OS-specific
 .DS_Store
@@ -22,14 +23,33 @@ Thumbs.db
 # Logs
 *.log
 
-# Build artifacts
+# CDK Context & Staging files
+cdk.context.json
+.cdk.staging/
 cdk.out/
-
-# AWS credentials/config (if accidentally copied)
-.aws/
+*.table.json
+cdk-integ.out.*/
 
 # Temporary files
 *.tmp
+*.bak
 
+# Security
+.aws/
+.credentials
+*.pem
+*.key
+*.crt
 .env
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs
+hs_err_pid*
+
+
+
 
