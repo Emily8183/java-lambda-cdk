@@ -30,17 +30,16 @@ public class JavaLambdaCdkStack extends Stack {
         super(scope, id, props);
 
         Bucket deploymentBucket = Bucket.Builder.create(this, "LambdaJarBucket") //construct ID -> logical ID
-            .bucketName("lambdahelloworldbucket1") //bucket name
+//            .bucketName("lambdahelloworldbucket1") //bucket name
             .removalPolicy(RemovalPolicy.DESTROY) //only for testing
             .autoDeleteObjects(true)
             .build();
-
         
         Project lambdaBuildProject = Project.Builder.create(this, "LambdaCodeBuild")
             .projectName("lambda-java-build")
             .source(Source.gitHub(GitHubSourceProps.builder()
                 .owner("Emily8183")
-                .repo("java-lambda-demo")
+                .repo("java-lambda-demo") 
                 .build()))
             .environment(BuildEnvironment.builder()
                 .buildImage(LinuxBuildImage.STANDARD_7_0)
@@ -52,16 +51,16 @@ public class JavaLambdaCdkStack extends Stack {
         //grant codebuild to upload this lambda to S3
         deploymentBucket.grantWrite(lambdaBuildProject);
 
+        lambdaBuildProject.getNode().addDependency(deploymentBucket);
 
+        Function lambdaFunction = Function.Builder.create(this, "JavaLambdaDemo")
+                 .functionName("lambda-java-cdk")
+                 .runtime(Runtime.JAVA_17)
+                 .handler("com.example.HelloLambdaDemo::handleRequest") //HelloLambdaDemo: package name
+                 .code(Code.fromBucket(deploymentBucket, "lambda-output/lambda.jar"))
+                 .build();
 
-        // Function lambdaFunction = new Function(this, "JavaLambdaDemo", FunctionProps.builder()
-        //         .projectName("lambda-java-build")
-        //         .runtime(Runtime.JAVA_17)
-        //         .handler("com.example.HelloLambdaDemo::handleRequest")
-        //         .code(Code.fromBucket(deploymentBucket, "lambda-output/lambda.jar"))
-        //         .functionName("java-lambda-cdk")
-        //         .build()
-        // );
+        lambdaFunction.getNode().addDependency(lambdaBuildProject);
 
     }
 }
