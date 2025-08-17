@@ -11,6 +11,8 @@ import software.constructs.Construct;
 
 import java.util.List;
 import java.util.Map;
+
+import static software.amazon.awscdk.services.codebuild.Source.*;
 //import software.amazon.awscdk.services.codepipeline.Pipeline;
 //import software.amazon.awscdk.services.codepipeline.StageProps;
 //import software.amazon.awscdk.services.codepipeline.actions.CodeBuildAction;
@@ -33,8 +35,25 @@ public class PipelineStack extends Stack{
                         .buildImage(LinuxBuildImage.STANDARD_7_0) //LinuxBuildImage.STANDARD_7_0: AWS提供的托管镜像
                         .computeType(ComputeType.SMALL)
                         .build())
-                .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //the source should be from the Artifact lambdaSourceOUtput
-                .source(Source.codePipeline())
+//                .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //error: If the Project's source is NoSource, you need to provide a concrete buildSpec
+                .buildSpec(BuildSpec.fromObject(Map.of(
+                        "version", "0.2",
+                        "phases", Map.of(
+                                "build", Map.of(
+                                        "commands", List.of(
+                                                "echo Building Lambda with Maven...",
+                                                "mvn clean package -DskipTests",
+                                                "mkdir -p output",
+                                                "cp target/java-lambda-demo-1.0-SNAPSHOT.jar output/lambda.jar",
+                                                "aws s3 cp output/lambda.jar s3://lambdahelloworldbucket1/lambda-output/lambda.jar"
+                                        )
+                                )
+                        ),
+                        "artifacts", Map.of(
+                                "base-directory", "output",
+                                "files", List.of("lambda.jar")
+                        )
+                )))
                 .build();
 
         //CDK Build and Deploy Project
