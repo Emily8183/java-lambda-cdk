@@ -34,28 +34,32 @@ public class PipelineStack extends Stack{
                 .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //the source should be from the Artifact lambdaSourceOUtput
                 .build();
 
-        //CDK Build Project
-        Project cdkBuildProject = Project.Builder.create(this, "CdkBuild")
-                .projectName("cdkBuildProject")
+        //CDK Build and Deploy Project
+        Project cdkBuildProject = Project.Builder.create(this, "CdkBuildProject")
+                .projectName("cdkBuildDeployProject")
                 .environment(BuildEnvironment.builder()
                         .buildImage(LinuxBuildImage.STANDARD_7_0)
                         .computeType(ComputeType.SMALL)
                         .build())
-                .buildSpec(BuildSpec.fromObject(new java.util.HashMap<String, Object>() {{ //TODO: move this part to buildspec.yml
-                    put("version", "0.2");
-                    put("phases", new java.util.HashMap<String, Object>() {{
-                        put("install", new java.util.HashMap<String, Object>() {{
-                            put("commands", List.of("npm install -g aws-cdk"));
-                        }});
-                        put("build", new java.util.HashMap<String, Object>() {{
-                            put("commands", List.of(
-                                    "mvn compile",
-                                    "cdk deploy --require-approval never"
-                            ));
-                        }});
-                    }});
-                }}))
+                .buildSpec(BuildSpec.fromObject(Map.of( //TODO: move this part to buildspec.yml
+                    "version", "0.2",
+                    "phases", Map.of(
+                            "install", Map.of(
+                                    "runtime-versions", Map.of("java", "corretto17"), // 明确Java版本
+                                    "commands", List.of(
+                                            "npm install -g aws-cdk"
+                                    )
+                            ),
+                            "build", Map.of(
+                                    "commands", List.of( //interact with LambdaBuildOutput
+                                            "mvn package", //TODO: "mvn compile","cdk synth"??
+                                            "cdk deploy" // TODO: --require-approval never???
+                                    )
+                            )
+                    )
+                )))
                 .build();
+
 
         Pipeline pipeline = Pipeline.Builder.create(this, "PipelineJavaTest")
                 .pipelineName("JavaLambdaPipeline")
