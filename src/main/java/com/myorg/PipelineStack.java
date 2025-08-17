@@ -52,8 +52,8 @@ public class PipelineStack extends Stack{
                             ),
                             "build", Map.of(
                                     "commands", List.of( //interact with LambdaBuildOutput
-                                            "mvn package", //TODO: "mvn compile","cdk synth"??
-                                            "cdk deploy" // TODO: --require-approval never???
+                                            "mvn package -DskipTests", //构建java cdk项目，"mvn compile"也可以。如果只是“mvn package", 会生成完整的target/
+                                            "cdk deploy --require-approval never" //deploy cdk to AWS, must add "require-approval never" //TODO: check details
                                     )
                             )
                     )
