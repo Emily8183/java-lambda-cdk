@@ -17,9 +17,12 @@ public class PipelineStack extends Stack{
     public PipelineStack(final Construct scope, final String id, final StackProps props, final String lambdaConnectionArn, final String cdkConnectionArn) {
         super(scope, id, props);
 
-        Artifact lambdaSourceOutput = new Artifact();
-        Artifact cdkSourceOutput = new Artifact();
-        Artifact lambdaBuildOutput = new Artifact("LambdaBuildOutput"); //assign the artifact as LambdaBuildOutput
+        //output the original versions
+        Artifact lambdaSourceOutput = new Artifact("LambdaSourceOutput"); //assign the artifact's name
+        Artifact cdkSourceOutput = new Artifact("cdkSourceOutput");
+
+        //output Lambda JAR
+        Artifact lambdaBuildOutput = new Artifact("LambdaBuildOutput");
 
         //Lambda Build Project
         Project lambdaBuildProject = Project.Builder.create(this, "LambdaBuild")
