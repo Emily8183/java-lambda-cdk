@@ -4,6 +4,7 @@ import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.codebuild.*;
 import software.amazon.awscdk.services.codepipeline.*;
+import software.amazon.awscdk.services.codebuild.Source;
 import software.amazon.awscdk.services.codepipeline.actions.*;
 import software.amazon.awscdk.services.codebuild.BuildEnvironmentVariable;
 import software.constructs.Construct;
@@ -33,6 +34,7 @@ public class PipelineStack extends Stack{
                         .computeType(ComputeType.SMALL)
                         .build())
                 .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //the source should be from the Artifact lambdaSourceOUtput
+                .source(Source.codePipeline())
                 .build();
 
         //CDK Build and Deploy Project
