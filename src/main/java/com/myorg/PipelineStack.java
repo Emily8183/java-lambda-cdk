@@ -25,13 +25,13 @@ public class PipelineStack extends Stack{
         Artifact lambdaBuildOutput = new Artifact("LambdaBuildOutput");
 
         //Lambda Build Project
-        Project lambdaBuildProject = Project.Builder.create(this, "LambdaBuild")
+        Project lambdaBuildProject = Project.Builder.create(this, "LambdaBuildProject")
                 .projectName("LambdaBuildProject")
                 .environment(BuildEnvironment.builder()
                         .buildImage(LinuxBuildImage.STANDARD_7_0) //LinuxBuildImage.STANDARD_7_0: AWS提供的托管镜像
                         .computeType(ComputeType.SMALL)
                         .build())
-                .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml"))
+                .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //the source should be from the Artifact lambdaSourceOUtput
                 .build();
 
         //CDK Build Project
