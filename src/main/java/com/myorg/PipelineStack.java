@@ -5,6 +5,7 @@ import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.codebuild.*;
 import software.amazon.awscdk.services.codepipeline.*;
 import software.amazon.awscdk.services.codepipeline.actions.*;
+import software.amazon.awscdk.services.codebuild.BuildEnvironmentVariable;
 import software.constructs.Construct;
 
 import java.util.List;
@@ -40,6 +41,15 @@ public class PipelineStack extends Stack{
                 .environment(BuildEnvironment.builder()
                         .buildImage(LinuxBuildImage.STANDARD_7_0)
                         .computeType(ComputeType.SMALL)
+                        // 直接为CodeBuild项目配置环境变量, 安全地存储在CloudFormation模板和CodeBuild服务中
+                        .environmentVariables(Map.of(
+                                        "LAMBDA_CONNECTION_ARN", BuildEnvironmentVariable.builder()
+                                                .value(lambdaConnectionArn) // 使用从构造函数(JavaLambdaCdkApp)传入的值
+                                                .build(),
+                                        "CDK_CONNECTION_ARN", BuildEnvironmentVariable.builder()
+                                                .value(cdkConnectionArn) // 使用从构造函数传入的值
+                                                .build()
+                        ))
                         .build())
                 .buildSpec(BuildSpec.fromObject(Map.of( //TODO: move this part to buildspec.yml
                     "version", "0.2",
