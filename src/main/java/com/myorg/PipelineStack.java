@@ -90,14 +90,28 @@ public class PipelineStack extends Stack{
 
                         //Stage2: build stage
                         StageProps.builder()
-                                .stageName("BuildAndDeploy")
+                                .stageName("Build")
                                 .actions(List.of(
                                         CodeBuildAction.Builder.create()
-                                            .actionName("BuildAndDeploy_Lambda")
+                                            .actionName("Build_Lambda") //build only, deploy in the next step
                                             .project(lambdaBuildProject)
                                             .input(lambdaSourceOutput) //这个input的是source stage所输出的artifact,即Lambda源码
                                                 .outputs(List.of(lambdaBuildOutput)) // 输出是构建好的 JAR 包
                                             .build()
+                                ))
+                                .build(),
+                        
+                        //Stage 3: deploy cdk
+                        StageProps.builder()
+                                .stageName("Deploy")
+                                .actions(List.of(
+                                        CodeBuildAction.Builder.create()
+                                                .actionName("Deploy_CDK_Stack")
+                                                .project(cdkBuildProject)
+                                                // 需要两个输入: CDK源码和Lambda的JAR包, 解决方案：a primary input => .input(), and an extra input => .extraInputs()
+                                              .input(cdkSourceOutput) //each action can only have one primary input
+                                                .extraInputs(List.of(lambdaBuildOutput))
+                                                .build()
                                 ))
                                 .build()
                 ))
