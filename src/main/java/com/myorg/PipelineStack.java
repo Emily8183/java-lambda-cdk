@@ -60,30 +60,45 @@ public class PipelineStack extends Stack{
                 )))
                 .build();
 
-
-        Pipeline pipeline = Pipeline.Builder.create(this, "PipelineJavaTest")
-                .pipelineName("JavaLambdaPipeline")
+        Pipeline.Builder.create(this, "JavaLambdaPipelineDemo")
+                .pipelineName("JavaLambdaPipelineDemo")
                 .stages(List.of(
-                        //source stage
+                        //Stage1: source stage (to get the two repos)
                         StageProps.builder()
                                 .stageName("Source")
-                                .actions(List.of(CodeStarConnectionsSourceAction.Builder.create()
-                                        .actionName("Checkout_Lambda")
-                                        .owner("Emily8183")
-                                        .repo("java-lambda-demo")
-                                        .branch("main")
-                                        .connectionArn(lambdaConnectionArn) //TODO: add on arn
-                                        .output(lambdaSourceOutput) //the new artifact
-                                        .build()))
+                                .actions(List.of(
+                                        //this part is to get the lambda origin code from Lambda repo
+                                        CodeStarConnectionsSourceAction.Builder.create()
+                                            .actionName("Checkout_Lambda")
+                                            .owner("Emily8183")
+                                            .repo("java-lambda-demo")
+                                            .branch("main")
+                                            .connectionArn(lambdaConnectionArn) //TODO: to replace
+                                            .output(lambdaSourceOutput)
+                                            .build(),
+                                        //this part is to get cdk_infra code from this repo
+                                        CodeStarConnectionsSourceAction.Builder.create()
+                                            .actionName("Checkout_CDK")
+                                            .owner("Emily8183")
+                                            .repo("java-lambda-cdk")
+                                            .branch("main")
+                                            .connectionArn(cdkConnectionArn) //TODO: to replace
+                                            .output(cdkSourceOutput)
+                                            .build()
+                                ))
                                 .build(),
-                        //build stage
+
+                        //Stage2: build stage
                         StageProps.builder()
                                 .stageName("BuildAndDeploy")
-                                .actions(List.of(CodeBuildAction.Builder.create()
-                                        .actionName("BuildAndDeploy_Lambda")
-                                        .project(cdkBuildProject)
-                                        .input(cdkSourceOutput) //这个input的是source stage所输出的artifact //TODO: double check
-                                        .build()))
+                                .actions(List.of(
+                                        CodeBuildAction.Builder.create()
+                                            .actionName("BuildAndDeploy_Lambda")
+                                            .project(lambdaBuildProject)
+                                            .input(lambdaSourceOutput) //这个input的是source stage所输出的artifact,即Lambda源码
+                                                .outputs(List.of(lambdaBuildOutput)) // 输出是构建好的 JAR 包
+                                            .build()
+                                ))
                                 .build()
                 ))
                 .build();
