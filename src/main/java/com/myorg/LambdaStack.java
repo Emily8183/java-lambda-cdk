@@ -11,18 +11,19 @@ public class LambdaStack extends Stack {
     public LambdaStack(Construct scope, String id) {
         super(scope, id);
 
-//        //shouldn't use Bucket.fromBucketName since we need a new bucket here, rather than referring
-//        Bucket deploymentBucket = Bucket.Builder.create(this, "LambdaJarBucket")
-//                .bucketName("lambdahelloworldbucket1")
-//                .removalPolicy(RemovalPolicy.DESTROY) // only for testing
-//                .autoDeleteObjects(true)
-//                .build();
-        IBucket deploymentBucket = Bucket.fromBucketName(this, "LambdaBucket", "lambdahelloworldbucket1"); //lambdahelloworldbucket1: lambdaBucketName
+        //shouldn't use Bucket.fromBucketName since we need a new bucket here, rather than referring
+        Bucket lambdaJarBucket = Bucket.Builder.create(this, "LambdaJarBucket")
+                .bucketName("lambdahelloworldbucket1")
+                .removalPolicy(RemovalPolicy.DESTROY) // only for testing
+                .autoDeleteObjects(true)
+                .build();
+
+//      IBucket deploymentBucket = Bucket.fromBucketName(this, "LambdaBucket", "lambdahelloworldbucket1");
 
         Function lambdaFunction = Function.Builder.create(this, "JavaLambdaDemo")
                 .runtime(Runtime.JAVA_17)
                 .handler("com.example.HelloLambdaDemo::handleRequest") //Java class
-                .code(Code.fromBucket(deploymentBucket, "lambda-output/lambda.jar")) //key = the object key of the S3 bucket
+                .code(Code.fromBucket(lambdaJarBucket, "lambda-output/lambda.jar")) //key = the object key of the S3 bucket
                 .build();
 
     }

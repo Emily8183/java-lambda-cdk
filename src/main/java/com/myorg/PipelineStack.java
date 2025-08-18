@@ -55,7 +55,7 @@ public class PipelineStack extends Stack{
                 )))
                 .build();
 
-        IBucket deploymentBucket = Bucket.fromBucketName(this, "DeploymentBucket", "lambdahelloworldbucket1");
+        IBucket deploymentBucket = Bucket.fromBucketName(this, "LambdaJarBucket", "lambdahelloworldbucket1");
         deploymentBucket.grantWrite(lambdaBuildProject);
 
         //CDK Build and Deploy Project
