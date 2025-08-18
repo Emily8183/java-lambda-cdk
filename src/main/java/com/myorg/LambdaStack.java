@@ -23,7 +23,7 @@ public class LambdaStack extends Stack {
         Function lambdaFunction = Function.Builder.create(this, "JavaLambdaDemo")
                 .runtime(Runtime.JAVA_17)
                 .handler("com.example.HelloLambdaDemo::handleRequest") //Java class
-                .code(Code.fromAsset("../LambdaBuildOutput/lambda.jar")) //key = the object key of the S3 bucket
+                .code(Code.fromAsset("LambdaBuildOutput/lambda.jar")) //key = the object key of the S3 bucket
                 .build();
 
     }

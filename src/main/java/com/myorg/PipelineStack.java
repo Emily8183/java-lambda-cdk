@@ -34,7 +34,7 @@ public class PipelineStack extends Stack{
                         .buildImage(LinuxBuildImage.STANDARD_7_0) //LinuxBuildImage.STANDARD_7_0: AWS提供的托管镜像
                         .computeType(ComputeType.SMALL)
                         .build())
-//                .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //error: If the Project's source is NoSource, you need to provide a concrete buildSpec
+                // .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //error: If the Project's source is NoSource, you need to provide a concrete buildSpec
                 .buildSpec(BuildSpec.fromObject(Map.of( //TODO: why can't use BuildSpec.fromSourceFilename？
                         "version", "0.2",
                         "phases", Map.of(
@@ -85,6 +85,11 @@ public class PipelineStack extends Stack{
                             ),
                             "build", Map.of(
                                     "commands", List.of( //interact with LambdaBuildOutput
+                                            "echo '--- Verifying file structure ---'",
+                                            "pwd",      // Prints the current directory (should be /codebuild/src/...)
+                                            "ls -lR",   // Lists all files and folders so you can see the structure
+                                            "echo '--- Verification complete ---'",
+
                                             "mvn package -DskipTests", //构建java cdk项目，"mvn compile"也可以。如果只是“mvn package", 会生成完整的target/
                                             "cdk deploy --require-approval never" //deploy cdk to AWS, must add "require-approval never" //TODO: check details
                                     )
@@ -129,7 +134,7 @@ public class PipelineStack extends Stack{
                                             .actionName("Build_Lambda") //build only, deploy in the next step
                                             .project(lambdaBuildProject)
                                             .input(lambdaSourceOutput) //这个input的是source stage所输出的artifact,即Lambda源码
-                                                .outputs(List.of(lambdaBuildOutput)) // 输出是构建好的 JAR 包
+                                                .outputs(List.of(lambdaBuildOutput)) // 输出是构建好的JAR包
                                             .build()
                                 ))
                                 .build(),
