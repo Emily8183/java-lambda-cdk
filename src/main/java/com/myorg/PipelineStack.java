@@ -4,18 +4,17 @@ import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.codebuild.*;
 import software.amazon.awscdk.services.codepipeline.*;
-import software.amazon.awscdk.services.codebuild.Source;
+
 import software.amazon.awscdk.services.codepipeline.actions.*;
 import software.amazon.awscdk.services.codebuild.BuildEnvironmentVariable;
 import software.constructs.Construct;
 
+import software.amazon.awscdk.services.s3.IBucket;
+import software.amazon.awscdk.services.s3.Bucket;
+
 import java.util.List;
 import java.util.Map;
 
-import static software.amazon.awscdk.services.codebuild.Source.*;
-//import software.amazon.awscdk.services.codepipeline.Pipeline;
-//import software.amazon.awscdk.services.codepipeline.StageProps;
-//import software.amazon.awscdk.services.codepipeline.actions.CodeBuildAction;
 
 public class PipelineStack extends Stack{
     public PipelineStack(final Construct scope, final String id, final StackProps props, final String lambdaConnectionArn, final String cdkConnectionArn) {
@@ -36,7 +35,7 @@ public class PipelineStack extends Stack{
                         .computeType(ComputeType.SMALL)
                         .build())
 //                .buildSpec(BuildSpec.fromSourceFilename("buildspec.yml")) //error: If the Project's source is NoSource, you need to provide a concrete buildSpec
-                .buildSpec(BuildSpec.fromObject(Map.of(
+                .buildSpec(BuildSpec.fromObject(Map.of( //TODO: why can't use BuildSpec.fromSourceFilename？
                         "version", "0.2",
                         "phases", Map.of(
                                 "build", Map.of(
@@ -55,6 +54,9 @@ public class PipelineStack extends Stack{
                         )
                 )))
                 .build();
+
+        IBucket deploymentBucket = Bucket.fromBucketName(this, "DeploymentBucket", "lambdahelloworldbucket1");
+        deploymentBucket.grantWrite(lambdaBuildProject);
 
         //CDK Build and Deploy Project
         Project cdkBuildProject = Project.Builder.create(this, "CdkBuildProject")
