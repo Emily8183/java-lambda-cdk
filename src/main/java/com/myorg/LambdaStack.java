@@ -14,7 +14,7 @@ public class LambdaStack extends Stack {
 
         //shouldn't use Bucket.fromBucketName since we need a new bucket here, rather than referring
         Bucket lambdaJarBucket = Bucket.Builder.create(this, "LambdaJarBucket")
-                .bucketName("lambdahelloworldbucket1")
+                .bucketName("lambdahelloworldbucket08171013")
                 .removalPolicy(RemovalPolicy.DESTROY) // only for testing
                 .autoDeleteObjects(true)
                 .build();
@@ -25,7 +25,7 @@ public class LambdaStack extends Stack {
                 .runtime(Runtime.JAVA_17)
                 .handler("com.example.HelloLambdaDemo::handleRequest") //Java class
 //                .code(Code.fromAsset("LambdaBuildOutput/lambda.jar")) //key = the object key of the S3 bucket
-                .code(Code.fromBucket(lambdaJarBucket, "lambda-output/lambda.jar"))
+                .code(Code.fromBucket(lambdaJarBucket, "lambda-output/lambda.jar")) //TODO: why lambda-output?
                 .build();
 
     }

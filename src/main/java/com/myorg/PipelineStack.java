@@ -44,7 +44,7 @@ public class PipelineStack extends Stack{
                                                 "mvn clean package -DskipTests",
                                                 "mkdir -p output",
                                                 "cp target/java-lambda-demo-1.0-SNAPSHOT.jar output/lambda.jar",
-                                                "aws s3 cp output/lambda.jar s3://lambdahelloworldbucket1/lambda-output/lambda.jar"
+                                                "aws s3 cp output/lambda.jar s3://lambdahelloworldbucket08171013/lambda-output/lambda.jar"
                                         )
                                 )
                         ),
@@ -55,7 +55,7 @@ public class PipelineStack extends Stack{
                 )))
                 .build();
 
-        IBucket deploymentBucket = Bucket.fromBucketName(this, "LambdaJarBucket", "lambdahelloworldbucket1");
+        IBucket deploymentBucket = Bucket.fromBucketName(this, "LambdaJarBucket", "lambdahelloworldbucket08171013");
         deploymentBucket.grantWrite(lambdaBuildProject);
 
         //CDK Build and Deploy Project
@@ -85,10 +85,10 @@ public class PipelineStack extends Stack{
                             ),
                             "build", Map.of(
                                     "commands", List.of( //interact with LambdaBuildOutput
-                                            "echo '--- Verifying file structure ---'",
-                                            "pwd",      // Prints the current directory (should be /codebuild/src/...)
-                                            "ls -lR",   // Lists all files and folders so you can see the structure
-                                            "echo '--- Verification complete ---'",
+//                                            "echo '--- Verifying file structure ---'",
+//                                            "pwd",      // Prints the current directory (should be /codebuild/src/...)
+//                                            "ls -lR",   // Lists all files and folders so you can see the structure
+//                                            "echo '--- Verification complete ---'",
 
                                             "mvn package -DskipTests", //构建java cdk项目，"mvn compile"也可以。如果只是“mvn package", 会生成完整的target/
                                             "cdk deploy --require-approval never" //deploy cdk to AWS, must add "require-approval never" //TODO: check details
