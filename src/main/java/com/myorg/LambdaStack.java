@@ -1,6 +1,7 @@
 package com.myorg;
 import software.amazon.awscdk.RemovalPolicy;
 import software.amazon.awscdk.Stack;
+import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.lambda.*;
@@ -8,7 +9,7 @@ import software.amazon.awscdk.services.lambda.Runtime;
 import software.amazon.awscdk.services.s3.IBucket;
 
 public class LambdaStack extends Stack {
-    public LambdaStack(Construct scope, String id) {
+    public LambdaStack(final Construct scope, final String id, final StackProps props ) {
         super(scope, id);
 
         //shouldn't use Bucket.fromBucketName since we need a new bucket here, rather than referring

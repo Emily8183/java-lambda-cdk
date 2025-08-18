@@ -21,11 +21,16 @@ public class JavaLambdaCdkApp {
                 .region(region)
                 .build();
 
-        new PipelineStack(app, "PipelineStack", StackProps.builder()
-                .env(deployEnv) // 将环境信息传入
-                .build(),
+//      create a shared stackProps for this environment
+        StackProps stackProps = StackProps.builder()
+                .env(deployEnv)
+                .build();
+
+        new PipelineStack(app, "PipelineStack", stackProps,
                 lambdaConnectionArn,
                 cdkConnectionArn);
+
+        new LambdaStack(app, "LambdaStack", stackProps);
 
         app.synth();
     }
