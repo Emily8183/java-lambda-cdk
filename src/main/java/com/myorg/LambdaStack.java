@@ -19,13 +19,16 @@ public class LambdaStack extends Stack {
                 .autoDeleteObjects(true)
                 .build();
 
+        CfnParametersCode lambdaCode = Code.fromCfnParameters(); //占位符
+
 //      IBucket deploymentBucket = Bucket.fromBucketName(this, "LambdaBucket", "lambdahelloworldbucket1");
 
         Function lambdaFunction = Function.Builder.create(this, "JavaLambdaDemo")
                 .runtime(Runtime.JAVA_17)
                 .handler("com.example.HelloLambdaDemo::handleRequest") //Java class
 //              .code(Code.fromAsset("LambdaBuildOutput/lambda.jar")) //key = the object key of the S3 bucket
-                .code(Code.fromBucket(lambdaJarBucket, "lambda-output/lambda.jar")) //TODO: why lambda-output?
+//              .code(Code.fromBucket(lambdaJarBucket, "lambda-output/lambda.jar")) //TODO: why lambda-output?
+                .code(lambdaCode)
                 .build();
 
     }
