@@ -44,7 +44,7 @@ public class PipelineStack extends Stack{
                                                 "mvn clean package -DskipTests",
                                                 "mkdir -p output",
                                                 "cp target/java-lambda-demo-1.0-SNAPSHOT.jar output/lambda.jar",
-                                                "aws s3 cp output/lambda.jar s3://lambdahelloworldbucket08171013/lambda-output/lambda.jar"
+                                                "aws s3 cp output/lambda.jar s3://lambdahelloworldbucket08171013/lambda-output/lambda.jar"//TODO: can't find s3 bucket if we don't deploy LambdaStack separately
                                         )
                                 )
                         ),
